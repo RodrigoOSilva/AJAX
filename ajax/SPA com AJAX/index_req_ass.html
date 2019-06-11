@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html lang="pt-br">
+	<head>
+		<meta charset="UTF-8">
+
+		<title>Requisições assíncronas</title>
+		
+		<!-- bootstrap - link cdn -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+        <script>
+        function requisitarPagina(url){
+            document.getElementById('conteudo').innerHTML = ''
+
+            if(!document.getElementById('loading')){
+                let imgLoading = document.createElement('img')
+                imgLoading.id = 'loading'
+                imgLoading.src ='loading.gif'
+                imgLoading.className = 'rounded mx-auto d-block'
+            
+                document.getElementById('conteudo').appendChild(imgLoading)
+            }
+            
+            let ajax = new XMLHttpRequest()
+
+            ajax.open('GET', url)
+
+            ajax.onreadystatechange = () => { //readyState = 2, 3, 4. 4 = finalizado.
+
+               if(ajax.readyState == 4 && ajax.status == 200){ //200 = sucess
+                    document.getElementById('conteudo').innerHTML = ajax.responseText //mostra o conteúdo dos doc pag1/2/3 na div referenciada
+                }
+            
+                if(ajax.readyState == 4 && ajax.status == 404){
+                    document.getElementById('conteudo').innerHTML = 'requisição finalizada. Erro 404'
+                }
+        }
+
+            ajax.send() //Dispara o request. Manda, depois de pronta, a requisição para o Servidor. 
+        }
+        </script>
+
+	</head>
+
+	<body>
+
+		<!-- Static navbar -->
+	    <nav class="navbar navbar-light bg-light mb-4">
+	      <div class="container">
+	        <div class="navbar-brand mb-0 h1">
+	        	<h3>Requisições síncronas e assíncronas</h3>
+	        </div>
+	      </div>
+	    </nav>
+
+
+	    <div class="container">
+
+	    	<div class="row mb-2">
+	    		<div class="col-md-4 center"></div>
+	    		<div class="col-md-4 center">
+	    			<a href="#" onclick="requisitarPagina('pagina_1_conteudo.html')" class="btn btn-primary">Página 1</a>
+	    			<a href="#" onclick="requisitarPagina('pagina_2_conteudo.html')" class="btn btn-primary">Página 2</a>
+	    			<a href="#" onclick="requisitarPagina('pagina_3_conteudo.html')" class="btn btn-primary">Página 3</a>
+	    		</div>
+	    		<div class="col-md-4 center"></div>
+	    	</div>
+	    	
+	    	<div class="row">
+		    	<div class="col-md-1"></div>
+
+		    	<div id='conteudo' class="col-md-10">
+                    
+		    	</div>
+		    		
+				<div class="col-md-1"></div>
+			</div>
+
+		</div>	
+    </body>
+</html>
+
+<!-- 
+SPA em JS puro:
+1 instanciar o objeto XMLHTTPrequest e os metodos open('get', url_parametro), onreadystatechange() e send()
+2 adicionar ao onclick a function(url_parametro.html/php/...) que contem a lógica da requisição AJAX via objeto do passo 1
+3 adicionar Id à div que ira receber os elementos e chamar, via DOM, o método responseText do 
+    objeto XMLHTTPrequest instanciado. 
+
+passo a passo: 
+A> usuário clica em X(1,2 ou 3), funcao requisitarPagina(url) inicia com o 
+parametro respectivo ao clique do usuário. 
+b> document.getElementById('conteudo').innerHTML = '' limpa o que estiver de nó filho da div id='conteudo'
+c> if(!document.getElementById('loading')){
+                let imgLoading = document.createElement('img')
+                imgLoading.id = 'loading'
+                imgLoading.src ='loading.gif'
+                imgLoading.className = 'rounded mx-auto d-block'
+            
+                document.getElementById('conteudo').appendChild(imgLoading)
+    }
+
+    se não houver nenhum elemento com ID loading na página, crie o gif de espera como filho de 'conteudo'
+
+d> let ajax = new XMLHttpRequest() instanciar o obj XMLHttpRequest em let ajax. //readyState = 0
+e> ajax.open('GET', url) Estabele uma conexão com o servidor. Acessa o método open, com método 'GET' e url de parmametro. 
+    URL é o mesmo parametro da função requisitarPagina(url). No HTML, está onclick=requisitarPagina(xxxxxxxx.html), que será passada para
+    a função e para o método ajax. //readyState = 1
+
+f> ajax.onreadystatechange = () => { //readyState = 2, 3, 4. 4 = finalizado.
+
+               if(ajax.readyState == 4 && ajax.status == 200){ //200 = sucess
+                    document.getElementById('conteudo').innerHTML = ajax.responseText //mostra o conteúdo dos doc pag1/2/3 na div referenciada
+                }
+            
+                if(ajax.readyState == 4 && ajax.status == 404){
+                    document.getElementById('conteudo').innerHTML = 'requisição finalizada. Erro 404'
+                }
+    
+    Ouvir a mudança de estado da requisição no servidor e injetar no HTML de 'conteudo' o HTML
+    respectivo de cada botao clicado, que está no em ajax.responseText.
+
+g>  ajax.send() //manda essa requisição para o servidor depois de pronta. Sê removida,
+    a requisição ficará sempre no ar, e o gif de espera funcionará pra sempre,
+    sem mostrar o conteudo HTML que está no servidor.
+
+
+ -->

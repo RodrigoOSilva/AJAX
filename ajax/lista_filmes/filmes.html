@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Catálogo de Filmes</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="xmltojson.js"></script>
+    <script>
+        function getFilmes(){
+            let xmlHttp = new XMLHttpRequest()
+            xmlHttp.open('GET', 'http://localhost/ajax/filmes.xml')
+
+            xmlHttp.onreadystatechange = () => {
+                if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
+                    let xmlFilmes = xmlHttp.responseText //o retorno da requisição em respText
+                    //console.log(xmlFilmes)
+                    let parser = new DOMParser()
+
+                    domFilmes = parser.parseFromString(xmlFilmes, 'text/xml') //string para XML
+
+                    //console.log(domFilmes)
+
+                    jsonFilmes = xmlToJson(domFilmes) //xml para Json
+
+                    //console.log(jsonFilmes)
+
+                    for(let i in jsonFilmes['filmes']['filme']){
+                        let item = jsonFilmes['filmes']['filme'][i]
+
+                        //Criar os elementos HTML
+                        let divRow = document.createElement('div')
+                        divRow.className = 'row'
+
+                        let divCol = document.createElement('div')
+                        divCol.className = 'col'
+
+                        let p1 = document.createElement('p')
+                        p1.innerHTML = '<strong>Título</strong> ' + item['titulo']['#text']
+
+                        let p2 = document.createElement('p')
+                        p2.innerHTML = '<strong>Resumo</strong> ' + item['resumo']['#text']
+
+                        let genero = ''
+                        for (let g in item.genero){
+                            genero ? genero += ', ' : '' //se genero tiver valor, add ', ' no final da string quando ouver valor
+                            genero += item.genero[g]['#text']
+                        }
+                        let p3 = document.createElement('p')
+                        p3.innerHTML = '<strong>Gênero</strong> ' + genero
+
+                        let elenco = ''
+                        for (let e in item.elenco.ator){
+                            elenco ? elenco += ', ' : '' //se genero tiver valor, add ', ' no final da string quando ouver valor
+                            elenco += item.elenco.ator[e]['#text']
+                        }
+                        let p4 = document.createElement('p')
+                        p4.innerHTML = '<strong>Elenco</strong> ' + elenco
+
+                        let p5 = document.createElement('p')
+                        p5.innerHTML = '<strong>Data de Lançamento</strong> ' + item.dataLancamento['#text'] + ' ('+ item.dataLancamento['@attributes']['pais'] +')'
+
+                        let hr = document.createElement('hr')
+
+                        //formatar a ordem em árvore dos elementos
+                        divRow.appendChild(divCol)
+                        divCol.appendChild(p1)
+                        divCol.appendChild(p2)
+                        divCol.appendChild(p3)
+                        divCol.appendChild(p4)
+                        divCol.appendChild(p5)
+                        divCol.appendChild(hr)
+
+                        document.getElementById('lista').appendChild(divRow)
+                    }
+                    
+                }
+            }
+
+            xmlHttp.send()
+        }
+
+    </script>
+  </head>
+  <body>
+      <nav class="navbar navbar-light bg-light mb-4">
+        <div class="container">
+            <div class="navbar-brand mb-0 h1">
+                <h3>Catálogo de Filmes</h3>
+            </div>
+        </div>
+      </nav>
+
+      <nav class="container" id="lista">
+        <div class="row mb-5">
+            <div class="col">
+                <button type="button" class="btn btn-success" onclick="getFilmes()">Listar Filmes</button>
+            </div>
+        </div>
+
+        
+
+      </nav>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>
