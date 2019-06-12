@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Livros</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script>
+
+        function getBooks(){
+            let n = document.getElementById('mother').innerHTML = ''
+
+            let search = document.getElementById('input').value
+            let address = 'https://www.googleapis.com/books/v1/volumes?q='+search
+            let request = new XMLHttpRequest();
+            request.open('GET', address)
+
+            request.onreadystatechange = () => {
+                if(request.readyState == 4 && request.status == 200){
+                    let Textrequest = request.responseText
+                    let JSONrequest = JSON.parse(Textrequest)
+
+                    console.log(JSONrequest)
+                        for(let i in JSONrequest.items){
+                            let item = JSONrequest.items[i]
+                        
+                            console.log(item)
+                            
+                            let divRow = document.createElement('div')
+                            divRow.className = 'row mb-5'
+                            divRow.id = 'divRow'
+
+                            let divCol = document.createElement('div')
+                            divCol.className = 'col col-8 mt-3'
+                            divRow.id = 'divCol'
+
+                            let divImg = document.createElement('div')
+                            divImg.className = 'col-3'
+                            divImg.id = 'divImg'
+
+                            //informações
+                            let p1 = document.createElement('p')
+                            p1.innerHTML = '<strong>Título</strong> ' + item.volumeInfo.title
+
+                            let author = item.volumeInfo.authors
+                            if(author == undefined){
+                                author = 'Não especificado'
+                            }
+                            let p2 = document.createElement('p')
+                            p2.innerHTML = '<strong>Autor</strong> ' + author
+                            
+                            let publishers = item.volumeInfo.publisher
+                            if(publishers == undefined){
+                                publishers = 'Não especificada'
+                            }
+                            let p3 = document.createElement('p')
+                            p3.innerHTML = '<strong>Editora</strong> ' + publishers
+
+                            let p4 = document.createElement('p')
+                            p4.innerHTML = '<strong>Ano da publicação</strong> ' + item.volumeInfo.publishedDate
+
+                            let span = document.createElement('span')
+                            span.innerHTML = "Comprar: "
+
+                            let link = document.createElement('a')
+                            link.href = item.saleInfo.buyLink
+                            link.innerHTML = item.saleInfo.buyLink
+
+
+                            let img = document.createElement('img')
+                            img.src = item.volumeInfo.imageLinks.thumbnail
+                            img.className = 'image'
+
+                            let hr = document.createElement('hr')
+                            
+
+                            //formatar a ordem em árvore dos elementos a educação da vontade
+                            divRow.appendChild(divCol)
+                            divCol.appendChild(p1)
+                            divCol.appendChild(p2)
+                            divCol.appendChild(p3)
+                            divCol.appendChild(p4)
+                            divCol.appendChild(span)
+                            divCol.appendChild(link)
+                            divCol.appendChild(hr)
+
+                            divRow.appendChild(divImg)
+                            //p5.appendChild(img)
+                            divImg.appendChild(img)
+                            document.getElementById('mother').appendChild(divRow)
+                            
+                        }
+                    
+                }
+
+
+            }
+
+            request.send()
+        }
+
+
+    </script>
+
+
+  </head>
+  <body>
+        <div class="container">
+            <div class="row form-group">
+                <div class="col-md-12 mt-5" id="lista">
+                    <div class="form-group ">
+                        <h1 class="title">Procure seu livro ou autor favorito</h1>
+                        <div class="input-group input-group-lg">
+                                <input type="text" class="form-control mb-3 " name="input" id="input" placeholder="Pesquisar">
+                        </div>
+                        <input name="pesquisa" id="pesquisa" class="btn btn-primary" value="Busca" type="button" onclick="getBooks()">
+                    </div>
+                    <div id="mother">
+                    <!-- div
+                     inner.html
+                    div -->
+                    </div>
+                    
+                </div>
+                            
+            </div>
+        </div>
+
+    
+
+      
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>
